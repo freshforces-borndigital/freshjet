@@ -1,2 +1,2 @@
 # freshjet
-Mailjet implementation by Fresh Forces. Also a drop-in replacement for `wp_mail`
+Mailjet implementation + `wp_mail()` drop-in replacement by Fresh Forces.
