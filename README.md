@@ -1,2 +1,2 @@
 # freshjet
-Mailjet implementation for Born Digital
+Mailjet implementation by Fresh Forces
