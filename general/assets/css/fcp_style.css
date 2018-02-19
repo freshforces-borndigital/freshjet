@@ -1,0 +1,96 @@
+/**
+ * -----------------------------------------------------------------------------
+ * Reset password
+ * -----------------------------------------------------------------------------
+ */
+#reset-password {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	z-index: 1000;
+	background: #00000082;
+	padding: 30px;
+	overflow: auto;
+}
+
+#rp-content {
+	width: 90%;
+	position: relative;
+	margin: 0 auto;
+	max-width: 600px;
+}
+
+.rp-inner {
+	background: #ffffff;
+	padding: 30px;
+	text-align: left;
+}
+
+.rp-inner h2 {
+	margin-top: 0;
+	font-family: TrashHand;
+	font-size: 48px;
+	font-weight: 400;
+	margin: 0;
+	color: #62a8a5;
+}
+
+.rp-inner h3 {
+	color: #9e9e9e;
+	margin: 0 0 20px 0;
+	font-size: 20px;
+}
+
+.rp-inner p {
+	margin-bottom: 20px;
+}
+
+#reset-password-form {
+	text-align: left;
+}
+
+#reset-password-form label {
+	display: block;
+}
+
+#reset-password-form input {
+	display: block;
+	width: 100%
+}
+
+#reset-password-form label.validetta-error {
+	border: 0;
+}
+
+#reset-password-form label.validetta-error input {
+	border-color: #cd2e26;
+}
+
+#reset-password-form .inputgroup input {
+	padding: 10px;
+	border: solid 1px #eeeeee;
+}
+
+#reset-password-form .inputgroup {
+	margin-bottom: 20px;
+}
+
+#reset-password-form .inputgroup .btn {
+	display: block;
+	width: 100%;
+}
+
+#reset-password-form .inputgroup label span:first-child {
+	font-size: 13px;
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	font-weight: bold;
+	color: #bbbbbb;
+}
+
+#reset-password-form .inputgroup + h4 {
+	margin: 0 0 15px 0;
+	border-bottom: solid 1px #fcd00a;
+}
