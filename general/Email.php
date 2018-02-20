@@ -177,9 +177,6 @@ class Email
 			'Messages' => $msg_items
 		];
 
-		// print_var($mail_prop);
-		// exit;
-
 		$response = $mailjet->post(
 			Resources::$Email,
 			['body' => $mail_prop]
