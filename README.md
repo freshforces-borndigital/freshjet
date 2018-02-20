@@ -3,8 +3,8 @@
 - [What is Freshjet?](#about)
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Simple mail](simple-mail)
-  - [Bulk mail](bulk-mail)
+  - [Simple mail](#simple-mail)
+  - [Bulk mail](#bulk-mail)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -30,7 +30,7 @@ $body    = '<p>Testing content using <span style="font-weight: 700;">mailjet</sp
 
 ### Simple mail
 
-Simple mail (via `wp_mail`) is usually suitable for sending simple emails. But not only that, you can also send mass emails with the same content (If you want dynamic content, please use [`bulk_mail`](bulk-mail)).
+Simple mail (via `wp_mail`) is usually suitable for sending simple emails. But not only that, you can also send mass emails with the same content (If you want dynamic content, please use [`bulk_mail`](#bulk-mail)).
 
 > Note:
 > Our support for `wp_mail` parameter is still limited to `$recipient`, `$subject`, `$body`, & `$headers`.
