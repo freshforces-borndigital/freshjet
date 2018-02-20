@@ -60,14 +60,14 @@ $result = wp_mail($emails, $subject, $body);
 <?php
 // You can specify the name of each email using this way
 $recipients = [
-  [
-    'Name'  => 'Mr. Bagus', 
-    'Email' => 'contactjavas@gmail.com'
-  ],
-  [
-    'Name'  => 'Mr. Prast',
-    'Email' => 'prast@fresh-forces.com'
-  ]
+    [
+        'Name'  => 'Someone 1', 
+        'Email' => 'someone@domain.com'
+    ],
+    [
+        'Name'  => 'Someone 2',
+        'Email' => 'someone2@domain.com'
+    ]
 ];
 $result = wp_mail($recipients, $subject, $body);
 ```
@@ -80,16 +80,16 @@ $result = wp_mail($recipients, $subject, $body);
 <?php
 // With this 1st way, you can separate recipients to receive different subject & body
 $param = [
-  [
-    'recipient' => 'someone@domain.com',
-    'subject'   => $subject,
-    'body'      => $body
-  ],
-  [
-    'recipient' => 'someone2@domain.com',
-    'subject'   => $subject,
-    'body'      => $body
-  ]
+    [
+        'recipient' => 'someone@domain.com',
+        'subject'   => $subject,
+        'body'      => $body
+    ],
+    [
+        'recipient' => 'someone2@domain.com',
+        'subject'   => $subject,
+        'body'      => $body
+    ]
 ];
 $result = bulk_mail($param);
 ```
@@ -100,16 +100,16 @@ $result = bulk_mail($param);
 <?php
 // And you can add group of emails to receive specific subject & body using this 2nd way
 $param = [
-  [
-    'recipient' => ['someone@domain.com', 'someone2@domain.com'],
-    'subject'   => $subject,
-    'body'      => $body
-  ],
-  [
-    'recipient' => ['someone3@domain.com', 'someone4@domain.com'],
-    'subject'   => $subject,
-    'body'      => $body
-  ]
+    [
+        'recipient' => ['someone@domain.com', 'someone2@domain.com'],
+        'subject'   => $subject,
+        'body'      => $body
+    ],
+    [
+        'recipient' => ['someone3@domain.com', 'someone4@domain.com'],
+        'subject'   => $subject,
+        'body'      => $body
+    ]
 ];
 $result = bulk_mail($param);
 ```
@@ -120,34 +120,34 @@ $result = bulk_mail($param);
 <?php
 // You can also specify the name of each email with this 3rd way
 $param = [
-  [
-    'recipient' => [
-      [
-        'Name' => 'Someone 1',
-        'Email' => 'someone@domain.com'
-      ],
-      [
-        'Name' => 'Someone 2',
-        'Email' => 'someone2@domain.com'
-      ]
+    [
+        'recipient' => [
+            [
+                'Name' => 'Someone 1',
+                'Email' => 'someone@domain.com'
+            ],
+            [
+                'Name' => 'Someone 2',
+                'Email' => 'someone2@domain.com'
+            ]
+        ],
+        'subject' => $subject,
+        'body'    => $body
     ],
-    'subject' => $subject,
-    'body'    => $body
-  ],
-  [
-    'recipient' => [
-      [
-        'Name' => 'Someone 3',
-        'Email' => 'someone3@domain.com'
-      ],
-      [
-        'Name' => 'Someone 4',
-        'Email' => 'someone4@domain.com'
-      ]
-    ],
-    'subject' => $subject,
-    'body'    => $body
-  ]
+    [
+        'recipient' => [
+            [
+                'Name' => 'Someone 3',
+                'Email' => 'someone3@domain.com'
+            ],
+            [
+                'Name' => 'Someone 4',
+                'Email' => 'someone4@domain.com'
+            ]
+        ],
+        'subject' => $subject,
+        'body'    => $body
+    ]
 ];
 $result = bulk_mail($param);
 ```
