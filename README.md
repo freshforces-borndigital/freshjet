@@ -118,7 +118,7 @@ $result = bulk_mail($param);
 
 ```
 <?php
-// You can also specify the name of each email with this 3rd way
+// You can also specify the name of each email using this 3rd way
 $param = [
     [
         'recipient' => [
