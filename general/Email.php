@@ -85,10 +85,21 @@ class Email
 			]
 		];
 
-		return $mailjet->post(
+		$response = $mailjet->post(
 			Resources::$Email,
 			['body' => $mail_prop]
 		);
+
+		if (method_exists($response, 'success')) {
+			$is_success = $response->success();
+
+			if (!$is_success) {
+				// log it
+				error_log( print_r($response->getData(), true) );
+			}
+		}
+
+		return $response;
 	}
 
 	/**
@@ -169,9 +180,20 @@ class Email
 		// print_var($mail_prop);
 		// exit;
 
-		return $mailjet->post(
+		$response = $mailjet->post(
 			Resources::$Email,
 			['body' => $mail_prop]
 		);
+
+		if (method_exists($response, 'success')) {
+			$is_success = $response->success();
+			
+			if (!$is_success) {
+				// log it
+				error_log( print_r($response->getData(), true) );
+			}
+		}
+
+		return $response;
 	}
 }
