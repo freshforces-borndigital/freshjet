@@ -16,8 +16,9 @@ Freshjet is a WordPress plugin of [Mailjet](https://www.mailjet.com/) implementa
 
 - Download the [latest release](https://github.com/freshforces-borndigital/freshjet/releases/latest).
 - Extract and rename it as *freshjet*.
-- Upload to your *wp-content*
+- Upload to your *wp-content* directory
 - Activate it from Dashboard -> Plugins
+- Insert your *api key* and *secret key* in *yoursite/wp-admin/admin.php?page=freshjet*
 
 ### Usage
 
