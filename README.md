@@ -1,18 +1,16 @@
 ### Summary
 
-- [What is Freshjet?](#what-is-freshjet)
+- [What is Freshjet?](#about)
 - [Installation](#installation)
 - [Usage](#usage)
-	- [Simple mail](simple-mail)
-	- [Bulk mail](bulk-mail)
+  - [Simple mail](simple-mail)
+  - [Bulk mail](bulk-mail)
 - [Contributing](#contributing)
 - [License](#license)
 
-### What is Freshjet
+### About
 
-Freshjet is a WordPress plugin of [Mailjet](https://www.mailjet.com/) implementation for [Fresh Forces](https://github.com/freshforces-borndigital/). 
-
-This plugin is very simple, giving you a drop-in replacement for `wp_mail` plus one flexible function: `bulk_mail`
+Freshjet is a WordPress plugin of [Mailjet](https://www.mailjet.com/) implementation for [Fresh Forces](https://github.com/freshforces-borndigital/). This plugin is very simple, giving you drop-in replacement for `wp_mail` plus one flexible function: `bulk_mail`
 
 ### Installation
 
@@ -66,14 +64,14 @@ You can specify the name of each email using this way:
 ```
 <?php
 $recipients = [
-	[
-		'Name'  => 'Mr. Bagus', 
-		'Email' => 'contactjavas@gmail.com'
-	],
-	[
-		'Name'  => 'Mr. Prast',
-		'Email' => 'prast@fresh-forces.com'
-	]
+  [
+    'Name'  => 'Mr. Bagus', 
+    'Email' => 'contactjavas@gmail.com'
+  ],
+  [
+    'Name'  => 'Mr. Prast',
+    'Email' => 'prast@fresh-forces.com'
+  ]
 ];
 $result = wp_mail($recipients, $subject, $body);
 ```
@@ -87,16 +85,16 @@ With this 1st way, you can separate recipients to receive different subject & bo
 ```
 <?php
 $param = [
-	[
-		'recipient' => 'someone@domain.com',
-		'subject'   => $subject,
-		'body'      => $body
-	],
-	[
-		'recipient' => 'someone2@domain.com',
-		'subject'   => $subject,
-		'body'      => $body
-	]
+  [
+    'recipient' => 'someone@domain.com',
+    'subject'   => $subject,
+    'body'      => $body
+  ],
+  [
+    'recipient' => 'someone2@domain.com',
+    'subject'   => $subject,
+    'body'      => $body
+  ]
 ];
 $result = bulk_mail($param);
 ```
@@ -108,16 +106,16 @@ And you can add group of emails to receive specific subject & body using this 2n
 ```
 <?php
 $param = [
-	[
-		'recipient' => ['someone@domain.com', 'someone2@domain.com'],
-		'subject'   => $subject,
-		'body'      => $body
-	],
-	[
-		'recipient' => ['someone3@domain.com', 'someone4@domain.com'],
-		'subject'   => $subject,
-		'body'      => $body
-	]
+  [
+    'recipient' => ['someone@domain.com', 'someone2@domain.com'],
+    'subject'   => $subject,
+    'body'      => $body
+  ],
+  [
+    'recipient' => ['someone3@domain.com', 'someone4@domain.com'],
+    'subject'   => $subject,
+    'body'      => $body
+  ]
 ];
 $result = bulk_mail($param);
 ```
@@ -129,34 +127,34 @@ You can also specify the name of each email with this 3rd way:
 ```
 <?php
 $param = [
-	[
-		'recipient' => [
-			[
-				'Name' => 'Someone 1',
-				'Email' => 'someone@domain.com'
-			],
-			[
-				'Name' => 'Someone 2',
-				'Email' => 'someone2@domain.com'
-			]
-		],
-		'subject' => $subject,
-		'body'    => $body
-	],
-	[
-		'recipient' => [
-			[
-				'Name' => 'Someone 3',
-				'Email' => 'someone3@domain.com'
-			],
-			[
-				'Name' => 'Someone 4',
-				'Email' => 'someone4@domain.com'
-			]
-		],
-		'subject' => $subject,
-		'body'    => $body
-	]
+  [
+    'recipient' => [
+      [
+        'Name' => 'Someone 1',
+        'Email' => 'someone@domain.com'
+      ],
+      [
+        'Name' => 'Someone 2',
+        'Email' => 'someone2@domain.com'
+      ]
+    ],
+    'subject' => $subject,
+    'body'    => $body
+  ],
+  [
+    'recipient' => [
+      [
+        'Name' => 'Someone 3',
+        'Email' => 'someone3@domain.com'
+      ],
+      [
+        'Name' => 'Someone 4',
+        'Email' => 'someone4@domain.com'
+      ]
+    ],
+    'subject' => $subject,
+    'body'    => $body
+  ]
 ];
 $result = bulk_mail($param);
 ```
