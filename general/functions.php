@@ -31,3 +31,15 @@ if (!function_exists('wp_mail')) {
 		return $email->send($recipients, $subject, $body, $headers, $attachments, $template);
 	}
 }
+
+/**
+ * Bulk mail sending
+ *
+ * @param  array $msg_items array of array
+ * @return object           mailjet's return object
+ */
+function bulk_mail($msg_items)
+{
+	$email = $GLOBALS['freshjet__email_object'];
+	return $email->send_bulk($msg_items);
+}
