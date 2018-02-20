@@ -21,7 +21,7 @@ Freshjet is a WordPress plugin of [Mailjet](https://www.mailjet.com/) implementa
 
 ### Usage
 
-There are 3 ways for both the *simple mail* (using `wp_mail`) and the *bulk mail* (using `bulk_mail`) usage. 
+There are 3 ways to use *simple mail* (using `wp_mail`) and *bulk mail* (using `bulk_mail`). 
 
 Lets provide them with the same `$subject` & `$body`:
 ```
