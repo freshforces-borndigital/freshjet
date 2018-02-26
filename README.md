@@ -33,9 +33,9 @@ $body    = '<p>Testing content using <span style="font-weight: 700;">mailjet</sp
 Simple mail (via `wp_mail`) is usually suitable for sending simple emails. But not only that, you can also send mass emails with the same content (If you want dynamic content, please use [`bulk_mail`](#bulk-mail)).
 
 > Note:
-> Our support for `wp_mail` parameter is still limited to `$recipient`, `$subject`, `$body`, & `$headers`.
+> Our support for `wp_mail` parameter is still limited to `$recipient`, `$subject`, & `$body`.
 >
-> Currently, the `$attachments` parameter is not supported. We want to add it in future. But if you want to add it sooner, please send us PR. We will be happy to check & merge it :)
+> Currently, the `$headers` & `$attachments` parameters are not supported. We want to add it in future. But if you want to add it sooner, please send us PR. We will be happy to check & merge it :)
 
 **1st way**
 

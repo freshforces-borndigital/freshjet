@@ -76,7 +76,12 @@ class Email
 		];
 
 		if ($headers) {
-			$msg_item['Headers'] = $headers;
+			/**
+			 * wp_mail uses string as $headers
+			 * while mailjet uses array as $headers, 
+			 * and there are some un-allowed types of $headers in mailjet
+			 */
+			// $msg_item['Headers'] = $headers;
 		}
 
 		$mail_prop = [
@@ -165,7 +170,12 @@ class Email
 				];
 	
 				if ($headers) {
-					$array['Headers'] = $headers;
+					/**
+					 * wp_mail uses string as $headers
+					 * while mailjet uses array as $headers, 
+					 * and there are some un-allowed types of $headers in mailjet
+					 */
+					// $array['Headers'] = $headers;
 				}
 	
 				array_push($msg_items, $array);
