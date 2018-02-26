@@ -20,7 +20,9 @@ class Setup
 		$api_key      = get_field('freshjet__api_key', 'option');
 		$secret_key   = get_field('freshjet__secret_key', 'option');
 		$sender_email = get_field('freshjet__sender_email', 'option');
+		$sender_email = apply_filters('freshjet/sender_email', $sender_email);
 		$sender_name  = get_field('freshjet__sender_name', 'option');
+		$sender_name  = apply_filters('freshjet/sender_name', $sender_name);
 
 		define('FRESHJET_API_KEY', $api_key);
 		define('FRESHJET_SECRET_KEY', $secret_key);
