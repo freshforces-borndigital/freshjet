@@ -21,7 +21,7 @@ class Email
 	 * Send email via Mailjet
 	 * https://dev.mailjet.com/guides/?php
 	 * https://github.com/mailjet/mailjet-apiv3-php
-	 * 
+	 *
 	 * @param  string/array $to         recipient's email
 	 * @param  string       $subject    email's subject
 	 * @param  string       $body       email's body
@@ -71,14 +71,20 @@ class Email
 		$msg_item = [
 			'From'     => $sender,
 			'To'       => $recipients,
-			'Subject'  => $subject,
-			'HTMLPart' => $body
+			'Subject'  => $subject
 		];
+
+		if('text/html' == apply_filters('wp_mail_content_type', 'text/plain')) {
+			$msg_item['HTMLPart'] = $body;
+		}
+		else {
+			$msg_item['TextPart'] = $body;
+		}
 
 		if ($headers) {
 			/**
 			 * wp_mail uses string as $headers
-			 * while mailjet uses array as $headers, 
+			 * while mailjet uses array as $headers,
 			 * and there are some un-allowed types of $headers in mailjet
 			 */
 			// $msg_item['Headers'] = $headers;
@@ -124,7 +130,7 @@ class Email
 			$body    = isset($item['body']) ? $item['body']:       null;
 			$headers = isset($item['headers']) ? $item['headers']: null;
 			$to      = isset($item['to']) ? $item['to']:           null;
-			
+
 			if (!$to) {
 				$to = isset($item['recipient']) ? $item['recipient']: null;
 			}
@@ -168,16 +174,16 @@ class Email
 					'Subject'  => $subject,
 					'HTMLPart' => $body
 				];
-	
+
 				if ($headers) {
 					/**
 					 * wp_mail uses string as $headers
-					 * while mailjet uses array as $headers, 
+					 * while mailjet uses array as $headers,
 					 * and there are some un-allowed types of $headers in mailjet
 					 */
 					// $array['Headers'] = $headers;
 				}
-	
+
 				array_push($msg_items, $array);
 			}
 		}
@@ -194,7 +200,7 @@ class Email
 
 		if (method_exists($response, 'success')) {
 			$is_success = $response->success();
-			
+
 			if (!$is_success) {
 				// log it
 				error_log( print_r($response->getData(), true) );
