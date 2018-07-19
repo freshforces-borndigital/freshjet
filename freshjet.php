@@ -3,7 +3,7 @@
  * Plugin Name: Freshjet
  * Plugin URI:  https://github.com/freshforces-borndigital/freshjet
  * Description: Mailjet implementation for Fresh Forces. Including `wp_mail()` drop-in replacement.
- * Version:     0.2.2
+ * Version:     0.2.3
  * Author:      Fresh Forces
  * Author URI:  https://github.com/freshforces-borndigital/
  * License:     MIT
