@@ -152,6 +152,18 @@ $param = [
 $result = bulk_mail($param);
 ```
 
+### Filter
+
+By default, freshjet will sent email as plain text.
+
+```
+apply_filters('wp_mail_content_type', $content_type = 'text/plain')
+```
+
+**$content_type**
+
+Type of email body to send. Accept: text/plain, text/html
+
 ## Contributing
 
 Support us by submitting issue or sending PR
