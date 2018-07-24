@@ -171,9 +171,15 @@ class Email
 				$array = [
 					'From'     => $sender,
 					'To'       => $recipients,
-					'Subject'  => $subject,
-					'HTMLPart' => $body
+					'Subject'  => $subject
 				];
+				
+				if('text/html' == apply_filters('wp_mail_content_type', 'text/plain')) {
+					$msg_item['HTMLPart'] = $body;
+				}
+				else {
+					$msg_item['TextPart'] = $body;
+				}
 
 				if ($headers) {
 					/**
