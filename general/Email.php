@@ -18,17 +18,17 @@ class Email
 	}
 
 	/**
-	 * Send email via Mailjet
-	 * https://dev.mailjet.com/guides/?php
-	 * https://github.com/mailjet/mailjet-apiv3-php
-	 *
-	 * @param  string/array $to         recipient's email
-	 * @param  string       $subject    email's subject
-	 * @param  string       $body       email's body
-	 * @return object                   mailjet's return object
-	 */
-	public function send($to, $subject = '', $body = '', $headers = '', $attachments = [], $template = false)
-	{
+	* Send email via Mailjet
+	* https://dev.mailjet.com/guides/?php
+	* https://github.com/mailjet/mailjet-apiv3-php
+	*
+	* @param  string/array $to         recipient's email
+	* @param  string       $subject    email's subject
+	* @param  string       $body       email's body
+	* @return object                   mailjet's return object
+	*/
+	public function send($to, $subject = '', $body = '', $headers = '', $attachments = [], $template = [])
+	{		
 		if (!$to) {
 			return;
 		}
@@ -69,24 +69,36 @@ class Email
 		$mailjet  = new Client(FRESHJET_API_KEY, FRESHJET_SECRET_KEY, true, ['version' => 'v3.1']);
 
 		$msg_item = [
-			'From'     => $sender,
-			'To'       => $recipients,
-			'Subject'  => $subject
+			'From'    => $sender,
+			'To'      => $recipients,
+			'Subject' => $subject,
 		];
 
-		if('text/html' == apply_filters('wp_mail_content_type', 'text/plain')) {
-			$msg_item['HTMLPart'] = $body;
+		if (!empty($attachments) && is_array($attachments)) {
+			foreach ($attachments as $key => $value) {
+				$msg_item[$key] = $value;
+			}
 		}
-		else {
-			$msg_item['TextPart'] = $body;
+
+		if (!empty($template) && is_array($template)) {
+			foreach ($template as $key => $value) {
+				$msg_item[$key] = $value;
+			}
+		} else {
+			if('text/html' == apply_filters('wp_mail_content_type', 'text/plain')) {
+				$msg_item['HTMLPart'] = $body;
+			}
+			else {
+				$msg_item['TextPart'] = $body;
+			}
 		}
 
 		if ($headers) {
 			/**
-			 * wp_mail uses string as $headers
-			 * while mailjet uses array as $headers,
-			 * and there are some un-allowed types of $headers in mailjet
-			 */
+			* wp_mail uses string as $headers
+			* while mailjet uses array as $headers,
+			* and there are some un-allowed types of $headers in mailjet
+			*/
 			// $msg_item['Headers'] = $headers;
 		}
 
@@ -114,20 +126,20 @@ class Email
 	}
 
 	/**
-	 * Bulk mail sending
-	 *
-	 * @param  array $items array of array
-	 * @return object       mailjet's return object
-	 */
+	* Bulk mail sending
+	*
+	* @param  array $items array of array
+	* @return object       mailjet's return object
+	*/
 	public function send_bulk($items)
 	{
 		$sender    = ['Email' => FRESHJET_SENDER_EMAIL, 'Name' => FRESHJET_SENDER_NAME];
-		$mailjet   = new Client(FRESHJET_API_KEY, FRESHJET_SECRET_KEY, true, ['version' => 'v3.1']);
+		$mailjet   = new Client(getenv(FRESHJET_API_KEY), getenv(FRESHJET_SECRET_KEY), true, ['version' => 'v3.1']);
 		$msg_items = [];
 
 		foreach ($items as $item) {
 			$subject = isset($item['subject']) ? $item['subject']: null;
-			$body    = isset($item['body']) ? $item['body']:       null;
+			$body    = isset($item['body']) ? $item['body']:      null;
 			$headers = isset($item['headers']) ? $item['headers']: null;
 			$to      = isset($item['to']) ? $item['to']:           null;
 
@@ -171,22 +183,16 @@ class Email
 				$array = [
 					'From'     => $sender,
 					'To'       => $recipients,
-					'Subject'  => $subject
+					'Subject'  => $subject,
+					'HTMLPart' => $body
 				];
-				
-				if('text/html' == apply_filters('wp_mail_content_type', 'text/plain')) {
-					$msg_item['HTMLPart'] = $body;
-				}
-				else {
-					$msg_item['TextPart'] = $body;
-				}
 
 				if ($headers) {
 					/**
-					 * wp_mail uses string as $headers
-					 * while mailjet uses array as $headers,
-					 * and there are some un-allowed types of $headers in mailjet
-					 */
+					* wp_mail uses string as $headers
+					* while mailjet uses array as $headers,
+					* and there are some un-allowed types of $headers in mailjet
+					*/
 					// $array['Headers'] = $headers;
 				}
 

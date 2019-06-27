@@ -8,15 +8,15 @@ $GLOBALS['freshjet__email_object'] = new Email();
 
 /**
  * Currently we limit the default parameters support:
- * 
+ *
  * $recipients: supported
  * $subject: supported
  * $body: supported
  * $headers: not-supported yet
  * $attachments: not-supported yet
- * 
+ *
  * and extra parameters:
- * 
+ *
  * $template: not-supported yet
  *
  * @param  string/array $recipients recipient's email
@@ -25,7 +25,7 @@ $GLOBALS['freshjet__email_object'] = new Email();
  * @return object                   mailjet's return object
  */
 if (!function_exists('wp_mail')) {
-	function wp_mail($recipients, $subject = '', $body = '', $headers = '', $attachments = [], $template = false)
+	function wp_mail($recipients, $subject = '', $body = '', $headers = '', $attachments = [], $template = [])
 	{
 		$email = $GLOBALS['freshjet__email_object'];
 		return $email->send($recipients, $subject, $body, $headers, $attachments, $template);
