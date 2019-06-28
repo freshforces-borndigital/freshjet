@@ -75,6 +75,25 @@
                 "maxlength": ""
             },
             {
+                "key": "field_5d145da98b785",
+                "label": "Template ID",
+                "name": "freshjet__template_id",
+                "type": "text",
+                "instructions": "",
+                "required": 0,
+                "conditional_logic": 0,
+                "wrapper": {
+                    "width": "",
+                    "class": "",
+                    "id": ""
+                },
+                "default_value": "",
+                "placeholder": "",
+                "prepend": "",
+                "append": "",
+                "maxlength": ""
+            },
+            {
                 "key": "field_5a8a6fefc68be",
                 "label": "Sender Identities",
                 "name": "",

@@ -1,72 +1,70 @@
 <?php
 namespace Freshjet\General;
 
-defined('ABSPATH') or die('Can\'t access directly');
+defined( 'ABSPATH' ) or die( 'Can\'t access directly' );
 
 use Mailjet\Resources;
 use Mailjet\Client;
 
-class Email
-{
+class Email {
+
 	private $_dir;
 	private $_url;
 
-	function __construct()
-	{
+	function __construct() {
 		$this->_dir = FRESHJET_DIR . '/general';
 		$this->_url = FRESHJET_URL . '/general';
 	}
 
 	/**
-	* Send email via Mailjet
-	* https://dev.mailjet.com/guides/?php
-	* https://github.com/mailjet/mailjet-apiv3-php
-	*
-	* @param  string/array $to         recipient's email
-	* @param  string       $subject    email's subject
-	* @param  string       $body       email's body
-	* @return object                   mailjet's return object
-	*/
-	public function send($to, $subject = '', $body = '', $headers = '', $attachments = [], $template = [])
-	{		
-		if (!$to) {
+	 * Send email via Mailjet
+	 * https://dev.mailjet.com/guides/?php
+	 * https://github.com/mailjet/mailjet-apiv3-php
+	 *
+	 * @param  string/array $to         recipient's email
+	 * @param  string       $subject    email's subject
+	 * @param  string       $body       email's body
+	 * @return object                   mailjet's return object
+	 */
+	public function send( $to, $subject = '', $body = '', $headers = '', $attachments = [], $template = [] ) {
+		if ( ! $to ) {
 			return;
 		}
 
 		// treat it as array
-		if (!is_array($to)) {
-			$to = [$to];
+		if ( ! is_array( $to ) ) {
+			$to = [ $to ];
 		}
 
 		// final format (array of array)
 		$recipients = [];
 
 		// convert it to "array of array" format
-		foreach($to as $receivers)
-		{
-			if (is_array($receivers)) {
+		foreach ( $to as $receivers ) {
+			if ( is_array( $receivers ) ) {
 				// if $recipients is array of array (format 3)
-
 				$to_props = [];
 
-				foreach ($receivers as $key => $val) {
-					if (array_key_exists('Email', $receivers)) {
-						if (array_key_exists('Email', $receivers) || array_key_exists('Name', $receivers)) {
-							$to_props[$key] = $val;
+				foreach ( $receivers as $key => $val ) {
+					if ( array_key_exists( 'Email', $receivers ) ) {
+						if ( array_key_exists( 'Email', $receivers ) || array_key_exists( 'Name', $receivers ) ) {
+							$to_props[ $key ] = $val;
 						}
 					}
 				}
 
-				array_push($recipients, $to_props);
+				array_push( $recipients, $to_props );
 			} else {
 				// if the $recipients is a string OR if $recipients is array of string (format 1 or 2)
-				array_push($recipients, ['Email' => $receivers]);
+				array_push( $recipients, [ 'Email' => $receivers ] );
 			}
-
 		}
 
-		$sender   = ['Email' => FRESHJET_SENDER_EMAIL, 'Name' => FRESHJET_SENDER_NAME];
-		$mailjet  = new Client(FRESHJET_API_KEY, FRESHJET_SECRET_KEY, true, ['version' => 'v3.1']);
+		$sender  = [
+			'Email' => FRESHJET_SENDER_EMAIL,
+			'Name'  => FRESHJET_SENDER_NAME,
+		];
+		$mailjet = new Client( FRESHJET_API_KEY, FRESHJET_SECRET_KEY, true, [ 'version' => 'v3.1' ] );
 
 		$msg_item = [
 			'From'    => $sender,
@@ -74,26 +72,25 @@ class Email
 			'Subject' => $subject,
 		];
 
-		if (!empty($attachments) && is_array($attachments)) {
-			foreach ($attachments as $key => $value) {
-				$msg_item[$key] = $value;
+		if ( ! empty( $attachments ) && is_array( $attachments ) ) {
+			foreach ( $attachments as $key => $value ) {
+				$msg_item[ $key ] = $value;
 			}
 		}
 
-		if (!empty($template) && is_array($template)) {
-			foreach ($template as $key => $value) {
-				$msg_item[$key] = $value;
-			}
+		$template_id = FRESHJET_TEMPLATE_ID;
+		if ( $template_id ) {
+			$msg_item['TemplateID']       = (int) $template_id;
+			$msg_item['TemplateLanguage'] = true;
 		} else {
-			if('text/html' == apply_filters('wp_mail_content_type', 'text/plain')) {
+			if ( 'text/html' == apply_filters( 'wp_mail_content_type', 'text/plain' ) ) {
 				$msg_item['HTMLPart'] = $body;
-			}
-			else {
+			} else {
 				$msg_item['TextPart'] = $body;
 			}
 		}
 
-		if ($headers) {
+		if ( $headers ) {
 			/**
 			* wp_mail uses string as $headers
 			* while mailjet uses array as $headers,
@@ -104,21 +101,21 @@ class Email
 
 		$mail_prop = [
 			'Messages' => [
-				$msg_item
-			]
+				$msg_item,
+			],
 		];
 
 		$response = $mailjet->post(
 			Resources::$Email,
-			['body' => $mail_prop]
+			[ 'body' => $mail_prop ]
 		);
 
-		if (method_exists($response, 'success')) {
+		if ( method_exists( $response, 'success' ) ) {
 			$is_success = $response->success();
 
-			if (!$is_success) {
+			if ( ! $is_success ) {
 				// log it
-				error_log( print_r($response->getData(), true) );
+				error_log( print_r( $response->getData(), true ) );
 			}
 		}
 
@@ -126,68 +123,78 @@ class Email
 	}
 
 	/**
-	* Bulk mail sending
-	*
-	* @param  array $items array of array
-	* @return object       mailjet's return object
-	*/
-	public function send_bulk($items)
-	{
-		$sender    = ['Email' => FRESHJET_SENDER_EMAIL, 'Name' => FRESHJET_SENDER_NAME];
-		$mailjet   = new Client(getenv(FRESHJET_API_KEY), getenv(FRESHJET_SECRET_KEY), true, ['version' => 'v3.1']);
+	 * Bulk mail sending
+	 *
+	 * @param  array $items array of array
+	 * @return object       mailjet's return object
+	 */
+	public function send_bulk( $items ) {
+		$sender    = [
+			'Email' => FRESHJET_SENDER_EMAIL,
+			'Name'  => FRESHJET_SENDER_NAME,
+		];
+		$mailjet   = new Client( getenv( FRESHJET_API_KEY ), getenv( FRESHJET_SECRET_KEY ), true, [ 'version' => 'v3.1' ] );
 		$msg_items = [];
 
-		foreach ($items as $item) {
-			$subject = isset($item['subject']) ? $item['subject']: null;
-			$body    = isset($item['body']) ? $item['body']:      null;
-			$headers = isset($item['headers']) ? $item['headers']: null;
-			$to      = isset($item['to']) ? $item['to']:           null;
+		foreach ( $items as $item ) {
+			$subject = isset( $item['subject'] ) ? $item['subject'] : null;
+			$body    = isset( $item['body'] ) ? $item['body'] : null;
+			$headers = isset( $item['headers'] ) ? $item['headers'] : null;
+			$to      = isset( $item['to'] ) ? $item['to'] : null;
 
-			if (!$to) {
-				$to = isset($item['recipient']) ? $item['recipient']: null;
+			if ( ! $to ) {
+				$to = isset( $item['recipient'] ) ? $item['recipient'] : null;
 			}
 
-			if ($to && $subject && $body) {
+			if ( $to && $subject && $body ) {
 				// treat it as array
-				if (!is_array($to)) {
-					$to = [$to];
+				if ( ! is_array( $to ) ) {
+					$to = [ $to ];
 				}
 
 				// final format (array of array)
 				$recipients = [];
 
 				// convert it to "array of array" format
-				foreach($to as $receivers)
-				{
-					if (is_array($receivers)) {
+				foreach ( $to as $receivers ) {
+					if ( is_array( $receivers ) ) {
 						// if $recipients is array of array (format 3)
-
 						$to_props = [];
 
-						foreach ($receivers as $key => $val) {
-							if (array_key_exists('Email', $receivers)) {
-								if (array_key_exists('Email', $receivers) || array_key_exists('Name', $receivers)) {
-									$to_props[$key] = $val;
+						foreach ( $receivers as $key => $val ) {
+							if ( array_key_exists( 'Email', $receivers ) ) {
+								if ( array_key_exists( 'Email', $receivers ) || array_key_exists( 'Name', $receivers ) ) {
+									$to_props[ $key ] = $val;
 								}
 							}
 						}
 
-						array_push($recipients, $to_props);
+						array_push( $recipients, $to_props );
 					} else {
 						// if the $recipients is a string OR if $recipients is array of string (format 1 or 2)
-						array_push($recipients, ['Email' => $receivers]);
+						array_push( $recipients, [ 'Email' => $receivers ] );
 					}
-
 				}
 
 				$array = [
-					'From'     => $sender,
-					'To'       => $recipients,
-					'Subject'  => $subject,
-					'HTMLPart' => $body
+					'From'    => $sender,
+					'To'      => $recipients,
+					'Subject' => $subject,
 				];
 
-				if ($headers) {
+				$template_id = FRESHJET_TEMPLATE_ID;
+				if ( $template_id ) {
+					$array['TemplateID']       = (int) $template_id;
+					$array['TemplateLanguage'] = true;
+				} else {
+					if ( 'text/html' == apply_filters( 'wp_mail_content_type', 'text/plain' ) ) {
+						$array['HTMLPart'] = $body;
+					} else {
+						$array['TextPart'] = $body;
+					}
+				}
+
+				if ( $headers ) {
 					/**
 					* wp_mail uses string as $headers
 					* while mailjet uses array as $headers,
@@ -196,26 +203,25 @@ class Email
 					// $array['Headers'] = $headers;
 				}
 
-				array_push($msg_items, $array);
+				array_push( $msg_items, $array );
 			}
 		}
 
-
 		$mail_prop = [
-			'Messages' => $msg_items
+			'Messages' => $msg_items,
 		];
 
 		$response = $mailjet->post(
 			Resources::$Email,
-			['body' => $mail_prop]
+			[ 'body' => $mail_prop ]
 		);
 
-		if (method_exists($response, 'success')) {
+		if ( method_exists( $response, 'success' ) ) {
 			$is_success = $response->success();
 
-			if (!$is_success) {
+			if ( ! $is_success ) {
 				// log it
-				error_log( print_r($response->getData(), true) );
+				error_log( print_r( $response->getData(), true ) );
 			}
 		}
 

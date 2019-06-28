@@ -1,5 +1,5 @@
 <?php
-defined('ABSPATH') or die('Can\'t access directly');
+defined( 'ABSPATH' ) or die( 'Can\'t access directly' );
 
 use Freshjet\General\Email;
 
@@ -24,11 +24,10 @@ $GLOBALS['freshjet__email_object'] = new Email();
  * @param  string       $body       email's body
  * @return object                   mailjet's return object
  */
-if (!function_exists('wp_mail')) {
-	function wp_mail($recipients, $subject = '', $body = '', $headers = '', $attachments = [], $template = [])
-	{
+if ( ! function_exists( 'wp_mail' ) ) {
+	function wp_mail( $recipients, $subject = '', $body = '', $headers = '', $attachments = [], $template = [] ) {
 		$email = $GLOBALS['freshjet__email_object'];
-		return $email->send($recipients, $subject, $body, $headers, $attachments, $template);
+		return $email->send( $recipients, $subject, $body, $headers, $attachments, $template );
 	}
 }
 
@@ -38,8 +37,7 @@ if (!function_exists('wp_mail')) {
  * @param  array $msg_items array of array
  * @return object           mailjet's return object
  */
-function bulk_mail($msg_items)
-{
+function bulk_mail( $msg_items ) {
 	$email = $GLOBALS['freshjet__email_object'];
-	return $email->send_bulk($msg_items);
+	return $email->send_bulk( $msg_items );
 }

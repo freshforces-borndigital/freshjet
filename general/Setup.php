@@ -1,35 +1,36 @@
 <?php
 namespace Freshjet\General;
 
-defined('ABSPATH') or die('Can\'t access directly');
+defined( 'ABSPATH' ) or die( 'Can\'t access directly' );
 
-class Setup
-{
+class Setup {
+
 	private $_dir;
 	private $_url;
 
-	function __construct($run_setup)
-	{
+	function __construct( $run_setup ) {
 		$this->_dir = FRESHJET_DIR . '/general';
 		$this->_url = FRESHJET_URL . '/general';
 
-		if (!$run_setup) {
+		if ( ! $run_setup ) {
 			return;
 		}
 
-		$api_key      = get_field('freshjet__api_key', 'option');
-		$secret_key   = get_field('freshjet__secret_key', 'option');
+		$api_key     = get_field( 'freshjet__api_key', 'option' );
+		$secret_key  = get_field( 'freshjet__secret_key', 'option' );
+		$template_id = get_field( 'freshjet__template_id', 'option' );
 
-		$sender_email = get_field('freshjet__sender_email', 'option');
-		$sender_email = apply_filters('freshjet/sender_email', $sender_email);
-		$sender_name  = get_field('freshjet__sender_name', 'option');
-		$sender_name  = apply_filters('freshjet/sender_name', $sender_name);
+		$sender_email = get_field( 'freshjet__sender_email', 'option' );
+		$sender_email = apply_filters( 'freshjet/sender_email', $sender_email );
+		$sender_name  = get_field( 'freshjet__sender_name', 'option' );
+		$sender_name  = apply_filters( 'freshjet/sender_name', $sender_name );
 
-		define('FRESHJET_API_KEY', $api_key);
-		define('FRESHJET_SECRET_KEY', $secret_key);
-		define('FRESHJET_SENDER_EMAIL', $sender_email);
-		define('FRESHJET_SENDER_NAME', $sender_name);
+		define( 'FRESHJET_API_KEY', $api_key );
+		define( 'FRESHJET_SECRET_KEY', $secret_key );
+		define( 'FRESHJET_TEMPLATE_ID', $template_id );
+		define( 'FRESHJET_SENDER_EMAIL', $sender_email );
+		define( 'FRESHJET_SENDER_NAME', $sender_name );
 	}
 }
 
-new Setup(true);
+new Setup( true );
