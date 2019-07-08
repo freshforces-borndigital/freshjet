@@ -88,7 +88,7 @@ class Setup {
 			<?php settings_errors(); ?>
 
 			<form method="post" action="options.php">
-				<div class="neatbox has-bigger-heading">
+				<div class="neatbox has-subboxes has-bigger-heading">
 					<?php
 					settings_fields( 'freshjet-keys-group' );
 					do_settings_sections( 'freshjet-general-page' );
