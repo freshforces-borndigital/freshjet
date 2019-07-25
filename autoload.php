@@ -1,21 +1,31 @@
 <?php
-defined('ABSPATH') or die('Can\'t access directly');
+/**
+ * Autoloading
+ *
+ * @package Freshjet
+ */
 
-// setting up admin area
-require 'admin/Setup.php';
+namespace Freshjet;
 
-// setting up general purpose
-require 'general/Setup.php';
+defined( 'ABSPATH' ) || die( "Can't access directly" );
 
-// if api & secret key is not ready yet
+// setup classes.
+require __DIR__ . '/class-setup.php';
+require __DIR__ . '/class-compatibility.php';
+
+// init classes.
+new Setup();
+new Compatibility();
+
+// stop if api & secret key is not ready yet.
 if (
-	!FRESHJET_API_KEY ||
-	!FRESHJET_SECRET_KEY ||
-	!FRESHJET_SENDER_EMAIL ||
-	!FRESHJET_SENDER_NAME
+	! FRESHJET_PUBLIC_KEY ||
+	! FRESHJET_SECRET_KEY ||
+	! FRESHJET_SENDER_EMAIL ||
+	! FRESHJET_SENDER_NAME
 ) {
 	return;
 }
 
-require 'general/Email.php';
-require 'general/functions.php';
+require 'class-email.php';
+require 'functions.php';
