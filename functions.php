@@ -43,15 +43,3 @@ function bulk_mail( $msg_items ) {
 	$email = new Email();
 	return $email->send_bulk( $msg_items );
 }
-
-add_action(
-	'wp',
-	function () {
-		$GLOBALS['freshjet_template_id']   = 927319;
-		$GLOBALS['freshjet_template_vars'] = [
-			'name' => 'Bagus Javas',
-		];
-
-		wp_mail( 'contactjavas@gmail.com', 'Freshjet Test', '<h2>Hi Bagus Javas,</h2><p>This is a test email.</p>' );
-	}
-);
