@@ -7,12 +7,15 @@
 
 namespace Freshjet;
 
+use Mailjet\Resources;
+use Mailjet\Client;
+
 /**
  * Setup Freshjet
  */
 class Setup {
 	/**
-	 * Settings meta key
+	 * Freshjet option's meta key
 	 *
 	 * @var string $options_key
 	 */
@@ -105,18 +108,23 @@ class Setup {
 	 * Register Freshjet settings fields.
 	 */
 	public function register_settings() {
+		$passport_note = '<p style="margin-top: 3px;"><small style="font-weight: 400;">You will need <strong>Transactional</strong> template in <a href="https://app.mailjet.com/templates/transactional">Mailjet\'s Passport</a></small>.</p>';
+
 		// Setup setting groups.
 		register_setting( 'freshjet-keys-group', $this->options_key );
 
 		// Setup setting sections.
 		add_settings_section( 'freshjet-keys-section', __( 'Mailjet Keys', 'freshjet' ), '', 'freshjet-general-page' );
 		add_settings_section( 'freshjet-sender-section', __( 'Sender Identities', 'freshjet' ), '', 'freshjet-general-page' );
+		add_settings_section( 'freshjet-template-section', __( "Mailjet's Passport Template", 'freshjet' ), '', 'freshjet-general-page' );
 
 		// Setup setting fields.
 		add_settings_field( 'freshjet-public-key-field', __( 'API Public Key (SMTP username)', 'freshjet' ), [ $this, 'render_public_key_field' ], 'freshjet-general-page', 'freshjet-keys-section' );
 		add_settings_field( 'freshjet-secret-key-field', __( 'API Secret Key (SMTP password)', 'freshjet' ), [ $this, 'render_secret_key_field' ], 'freshjet-general-page', 'freshjet-keys-section' );
 		add_settings_field( 'freshjet-sender-name-field', __( 'Sender Name', 'freshjet' ), [ $this, 'render_sender_name_field' ], 'freshjet-general-page', 'freshjet-sender-section' );
 		add_settings_field( 'freshjet-sender-email-field', __( 'Sender Email', 'freshjet' ), [ $this, 'render_sender_email_field' ], 'freshjet-general-page', 'freshjet-sender-section' );
+		add_settings_field( 'freshjet-template-selector-field', __( 'Default Transactional Template', 'freshjet' ) . $passport_note, [ $this, 'render_template_selector_field' ], 'freshjet-general-page', 'freshjet-template-section' );
+		add_settings_field( 'freshjet-enable-individual-template-field', __( 'Individual Transactional Template', 'freshjet' ), [ $this, 'render_enable_individual_template_field' ], 'freshjet-general-page', 'freshjet-template-section' );
 	}
 
 	/**
@@ -184,6 +192,80 @@ class Setup {
 	}
 
 	/**
+	 * Render template selector field
+	 */
+	public function render_template_selector_field() {
+		$opts        = get_option( $this->options_key );
+		$template_id = isset( $opts['template_id'] ) ? absint( $opts['template_id'] ) : 0;
+		$templates   = $this->get_mailjet_templates();
+		?>
+
+		<select name="<?php echo esc_attr( $this->options_key ); ?>[template_id]" class="regular-text">
+			<?php if ( ! empty( $templates ) ) : ?>
+				<?php foreach ( $templates as $template ) : ?>
+					<option value="<?php echo esc_attr( $template['id'] ); ?>" <?php selected( $template_id, $template['id'] ); ?>>
+						<?php echo esc_html( $template['name'] ); ?>
+						<?php if ( ! empty( $template['description'] ) ) : ?>
+							&mdash;
+							<?php echo esc_html( $template['description'] ); ?>
+						<?php endif; ?>
+					</option>
+				<?php endforeach; ?>
+			<?php else : ?>
+				<option value="">Not available</option>
+			<?php endif; ?>
+		</select>
+
+		<p>
+			<small>
+				<?php if ( ! empty( $templates ) ) : ?>
+					This is default template for general <code>wp_mail()</code> usage where only <code>subject</code> & <code>body</code> will be used as variables.
+					<br>However, this template can be overriden by individual template when sending an email.
+				<?php else : ?>
+					You don't have any transactional template in Mailjet's Passport.
+				<?php endif; ?>
+			</small>
+		</p>
+
+		<?php
+	}
+
+	/**
+	 * Render individual template field
+	 */
+	public function render_enable_individual_template_field() {
+		$opts       = get_option( $this->options_key );
+		$is_enabled = isset( $opts['enable_individual_template'] ) ? absint( $opts['enable_individual_template'] ) : 0;
+		?>
+
+		<label>
+			<input 
+				type="checkbox" value="1"
+				name="<?php echo esc_attr( $this->options_key ); ?>[enable_individual_template]" 
+				<?php checked( $is_enabled, 1 ); ?>
+			>
+			Enable
+		</label>
+
+		<p>
+			<small>
+				By enabling this option, you will be able to use custom template id and it's variables for each email. <br>
+				You can use it by providing these optional global variables:
+			</small>
+			<ul>
+				<li>
+					<small><code>$GLOBALS['freshjet_template_id'];</code> with the value is integer</small>
+				</li>
+				<li>
+					<small><code>$GLOBALS['freshjet_template_vars'];</code> with the value is array</small>
+				</li>
+			</ul>
+		</p>
+
+		<?php
+	}
+
+	/**
 	 * Setting page styles
 	 */
 	public function settings_page_styles() {
@@ -194,5 +276,72 @@ class Setup {
 		}
 
 		wp_enqueue_style( 'settings-page', FRESHJET_PLUGIN_URL . '/assets/css/settings-page.css', [], '0.1.0' );
+	}
+
+	/**
+	 * Get mailjet templates
+	 *
+	 * @see https://dev.mailjet.com/reference/email/templates/
+	 *
+	 * @return array
+	 */
+	public function get_mailjet_templates() {
+		/**
+		 * Fetching Mailjet's Passport Template
+		 *
+		 * @link https://dev.mailjet.com/guides/#use-the-template-in-send-api
+		 * @link https://dev.mailjet.com/reference/email/templates/#v3_get_template
+		 *
+		 * ! This doesn't work.
+		 */
+
+		/**
+		$mailjet = new Client( FRESHJET_PUBLIC_KEY, FRESHJET_SECRET_KEY, true, [ 'version' => 'v3.1' ] );
+
+		$filters   = [
+			'EditMode'  => 'tool',
+			'Limit'     => '100', // Max value 1000.
+			'OwnerType' => 'user', // Or apikey.
+			'Purposes'  => 'transactional', // This even doesn't work in the curl version.
+		];
+		$templates = $mailjet->get( Resources::$Template, [ 'filters' => $filters ] );
+		*/
+
+		// ! patch
+		// phpcs:disable -- I use curl since I got Guzzle's 404 when using Mailjet's API, and I'm not sure if I can easily use `wp_remote_get`
+		$ch      = curl_init();
+		$api_url = 'https://api.mailjet.com/v3/REST/template?EditMode=tool\&Limit=100\&OwnerType=user';
+
+		curl_setopt( $ch, CURLOPT_URL, $api_url );
+		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+		curl_setopt( $ch, CURLOPT_USERPWD, FRESHJET_PUBLIC_KEY . ':' . FRESHJET_SECRET_KEY );
+		curl_setopt( $ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
+
+		$json_list = curl_exec( $ch );
+		curl_close( $ch );
+		// phpcs:enable
+		// ! end of patch
+
+		$array_list = json_decode( $json_list, true );
+		$templates  = [];
+
+		if ( ! isset( $array_list['Count'] ) || $array_list['Count'] < 1 ) {
+			return $templates;
+		}
+
+		foreach ( $array_list['Data'] as $template ) {
+			if ( in_array( 'transactional', $template['Purposes'], true ) ) {
+				array_push(
+					$templates,
+					[
+						'id'          => $template['ID'],
+						'name'        => $template['Name'],
+						'description' => $template['Description'],
+					]
+				);
+			}
+		}
+
+		return $templates;
 	}
 }

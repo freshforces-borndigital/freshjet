@@ -15,6 +15,16 @@ use Mailjet\Client;
  */
 class Email {
 	/**
+	 * Freshjet option's meta key
+	 *
+	 * @var string $options_key
+	 */
+	private $options_key = 'freshjet_options';
+
+	public function __construct() {
+	}
+
+	/**
 	 * Send email via Mailjet
 	 *
 	 * @link https://dev.mailjet.com/guides/?php
@@ -25,11 +35,10 @@ class Email {
 	 * @param  string       $body        Message body.
 	 * @param  string|array $headers     Additional headers.
 	 * @param  array        $attachments Files to attach.
-	 * @param  array        $templates   Mailjet templates.
 	 *
 	 * @return bool                      Whether the email contents were sent successfully or not.
 	 */
-	public function send( $recipients, $subject = '', $body = '', $headers = '', $attachments = [], $templates = [] ) {
+	public function send( $recipients, $subject = '', $body = '', $headers = '', $attachments = [] ) {
 		if ( ! $recipients ) {
 			return false;
 		}
@@ -48,9 +57,35 @@ class Email {
 			'Subject' => $subject,
 		];
 
-		if ( ! empty( $templates ) && is_array( $templates ) ) {
-			foreach ( $templates as $key => $value ) {
-				$msg_item[ $key ] = $value;
+		$use_template = false;
+		$template_id  = 0;
+
+		if ( isset( $GLOBALS['freshjet_template_id'] ) ) {
+			$use_template = true;
+			$template_id  = absint( $GLOBALS['freshjet_template_id'] );
+		} else {
+			$options = get_option( $this->options_key );
+
+			if ( ! empty( $options['template_id'] ) ) {
+				$use_template = true;
+				$template_id  = absint( $options['template_id'] );
+			}
+		}
+
+		if ( $use_template ) {
+			$msg_item['TemplateLanguage'] = true;
+			$msg_item['TemplateID']       = $template_id;
+
+			if ( isset( $GLOBALS['freshjet_template_vars'] ) ) {
+				$raw_vars = is_array( $GLOBALS['freshjet_template_vars'] ) ? $GLOBALS['freshjet_template_vars'] : [];
+				$vars     = array_map( [ $this, 'filter_template_var' ], $raw_vars ); 
+
+				$msg_item['Variables'] = $vars;
+			} else {
+				$msg_item['Variables'] = [
+					'subject' => $subject,
+					'body'    => $body,
+				];
 			}
 		} else {
 			if ( 'text/html' === apply_filters( 'wp_mail_content_type', 'text/plain' ) ) {
@@ -113,7 +148,6 @@ class Email {
 			$body        = isset( $item['body'] ) ? $item['body'] : null;
 			$headers     = isset( $item['headers'] ) ? $item['headers'] : null;
 			$attachments = isset( $item['attachments'] ) ? $item['attachments'] : [];
-			$templates   = isset( $item['templates'] ) ? $item['templates'] : []; // TODO: Add support for $templates in bulk send.
 
 			if ( ! $recipients ) {
 				$recipients = isset( $item['recipient'] ) ? $item['recipient'] : null;
@@ -128,10 +162,15 @@ class Email {
 					'Subject' => $subject,
 				];
 
-				if ( 'text/html' === apply_filters( 'wp_mail_content_type', 'text/plain' ) ) {
-					$array['HTMLPart'] = $body;
+				if ( ! empty( $template_id ) ) {
+					$array['TemplateLanguage'] = true;
+					$array['TemplateID']       = $template_id;
 				} else {
-					$array['TextPart'] = $body;
+					if ( 'text/html' === apply_filters( 'wp_mail_content_type', 'text/plain' ) ) {
+						$array['HTMLPart'] = $body;
+					} else {
+						$array['TextPart'] = $body;
+					}
 				}
 
 				if ( ! empty( $headers ) ) {
@@ -182,13 +221,13 @@ class Email {
 
 		// If $recipients is a string (format 1 and 3).
 		if ( is_string( $recipients ) ) {
-			$string_with_commas = explode( ',', $recipient );
+			$string_with_commas = explode( ',', $recipients );
 
 			// If $recipients is a single email.
 			if ( count( $string_with_commas ) <= 1 ) {
-				$recipient = trim( $recipient, ',' );
+				$recipient = trim( $recipients, ',' );
 
-				array_push( $mailjet_recipients, [ 'Email' => $recipient ] );
+				array_push( $mailjet_recipients, [ 'Email' => $recipients ] );
 			} else {
 				// If $recipients is a comma separated emails.
 				foreach ( $string_with_commas as $recipient_str ) {
@@ -285,5 +324,29 @@ class Email {
 		}
 
 		return $mailjet_headers;
+	}
+
+	/**
+	 * Add Mailjet's template support
+	 *
+	 * @param array $template_id The given Mailjet's template id.
+	 *
+	 * @return array $template The Mailjet template.
+	 */
+	private function handle_template( $template_id ) {
+		return '';
+	}
+
+	/**
+	 * Filter template var
+	 *
+	 * @param mixed $item The un-filtered var.
+	 *
+	 * @return mixed The filtered var.
+	 */
+	private function filter_template_var( $item ) {
+		$item = is_string( $item ) || is_numeric( $item ) || is_bool( $item ) ? $item : '';
+
+		return $item;
 	}
 }
