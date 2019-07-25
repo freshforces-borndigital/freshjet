@@ -188,4 +188,4 @@ Support us by submitting issue or sending PR
 
 ## License
 
-Licensed under the [MIT License](https://oss.ninja/mit?organization=Fresh%20Forces) by [Fresh Forces](https://github.com/freshforces-borndigital/)
+Licensed under the [GPL-3.0 License](https://oss.ninja/gpl-3.0?organization=Fresh-Forces) by [Fresh Forces](https://github.com/freshforces-borndigital/)
