@@ -17,11 +17,22 @@ class Email {
 	/**
 	 * Freshjet option's meta key
 	 *
-	 * @var string $options_key
+	 * @var string
 	 */
 	private $options_key = 'freshjet_options';
 
+	/**
+	 * Freshjet options
+	 *
+	 * @var array
+	 */
+	private $options = [];
+
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
+		$this->options = get_option( $this->options_key );
 	}
 
 	/**
@@ -57,18 +68,21 @@ class Email {
 			'Subject' => $subject,
 		];
 
-		$use_template = false;
-		$template_id  = 0;
+		$use_template      = false;
+		$template_id       = 0;
+		$enable_individual = isset( $opts['enable_individual_template'] ) ? absint( $opts['enable_individual_template'] ) : 0;
 
-		if ( isset( $GLOBALS['freshjet_template_id'] ) ) {
-			$use_template = true;
-			$template_id  = absint( $GLOBALS['freshjet_template_id'] );
-		} else {
-			$options = get_option( $this->options_key );
-
-			if ( ! empty( $options['template_id'] ) ) {
+		if ( $enable_individual ) {
+			if ( isset( $GLOBALS['freshjet_template_id'] ) ) {
 				$use_template = true;
-				$template_id  = absint( $options['template_id'] );
+				$template_id  = absint( $GLOBALS['freshjet_template_id'] );
+			}
+		}
+
+		if ( ! $use_template ) {
+			if ( ! empty( $this->options['template_id'] ) ) {
+				$use_template = true;
+				$template_id  = absint( $this->options['template_id'] );
 			}
 		}
 
@@ -78,7 +92,7 @@ class Email {
 
 			if ( isset( $GLOBALS['freshjet_template_vars'] ) ) {
 				$raw_vars = is_array( $GLOBALS['freshjet_template_vars'] ) ? $GLOBALS['freshjet_template_vars'] : [];
-				$vars     = array_map( [ $this, 'filter_template_var' ], $raw_vars ); 
+				$vars     = array_map( [ $this, 'filter_template_var' ], $raw_vars );
 
 				$msg_item['Variables'] = $vars;
 			} else {
