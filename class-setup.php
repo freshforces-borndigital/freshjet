@@ -307,21 +307,17 @@ class Setup {
 		$templates = $mailjet->get( Resources::$Template, [ 'filters' => $filters ] );
 		*/
 
-		// ! patch
-		// phpcs:disable -- I use curl since I got Guzzle's 404 when using Mailjet's API, and I'm not sure if I can easily use `wp_remote_get`
-		$ch      = curl_init();
-		$api_url = 'https://api.mailjet.com/v3/REST/template?EditMode=tool\&Limit=100\&OwnerType=user';
+		$api_url  = 'https://api.mailjet.com/v3/REST/template?EditMode=tool\&Limit=100\&OwnerType=user';
+		$response = wp_remote_get(
+			$api_url,
+			[
+				'headers' => array(
+					'Authorization' => 'Basic ' . base64_encode( FRESHJET_PUBLIC_KEY . ':' . FRESHJET_SECRET_KEY ),
+				),
+			]
+		);
 
-		curl_setopt( $ch, CURLOPT_URL, $api_url );
-		curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
-		curl_setopt( $ch, CURLOPT_USERPWD, FRESHJET_PUBLIC_KEY . ':' . FRESHJET_SECRET_KEY );
-		curl_setopt( $ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC );
-
-		$json_list = curl_exec( $ch );
-		curl_close( $ch );
-		// phpcs:enable
-		// ! end of patch
-
+		$json_list  = $response['body'];
 		$array_list = json_decode( $json_list, true );
 		$templates  = [];
 
