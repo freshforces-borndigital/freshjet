@@ -48,6 +48,6 @@ Yes, we have it [here] (https://github.com/freshforces-borndigital/freshjet)
 1. images/admin-screenshot-1.png
 
 == Changelog ==
-= 0.5.2 =
+= 0.5.3 =
 - `wp_mail()` drop-in replacement
 - Provide support for Mailjet\'s Transactional Passport Template
