@@ -1,9 +1,11 @@
 === Freshjet ===
 Contributors: contactjavas
-Tags: Mailjet, SMTP, wp_mail, Freshjet
-Requires at least: 5.2.2
+Tags: mailjet, freshjet, wp_mail, smtp, transactional, email
+Donate link: https://www.patreon.com/bagus
+Requires at least: 5.2
 Tested up to: 5.2.2
-Requires PHP: 7.3
+Requires PHP: 7.2
+Stable tag: trunk
 License: GPL-3.0 License
 License URI: https://oss.ninja/gpl-3.0?organization=Fresh-Forces
 
@@ -45,9 +47,12 @@ We support the Passport Transactional Template.
 Yes, we have it [here] (https://github.com/freshforces-borndigital/freshjet)
 
 == Screenshots ==
-1. images/admin-screenshot-1.png
+1. admin-screenshot-1.png
 
 == Changelog ==
-= 0.5.2 =
+= 0.5.3 =
 - `wp_mail()` drop-in replacement
-- Provide support for Mailjet\'s Transactional Passport Template
+- Provide support for Mailjet's Transactional Passport Template
+
+== Upgrade Notice ==
+Just update the plugin
