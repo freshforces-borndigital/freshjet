@@ -286,6 +286,10 @@ class Setup {
 	 * @return array
 	 */
 	public function get_mailjet_templates() {
+		$is_master_key  = $this->check_mailjet_key();
+		$tpl_owner_type = $is_master_key ? 'user' : 'apikey';
+		$api_url        = 'https://api.mailjet.com/v3/REST/template?EditMode=tool\&Limit=100\&OwnerType=' . $tpl_owner_type;
+
 		/**
 		 * Fetching Mailjet's Passport Template
 		 *
@@ -301,13 +305,12 @@ class Setup {
 		$filters   = [
 			'EditMode'  => 'tool',
 			'Limit'     => '100', // Max value 1000.
-			'OwnerType' => 'user', // Or apikey.
+			'OwnerType' => $tpl_owner_type,
 			'Purposes'  => 'transactional', // This even doesn't work in the curl version.
 		];
 		$templates = $mailjet->get( Resources::$Template, [ 'filters' => $filters ] );
 		*/
 
-		$api_url  = 'https://api.mailjet.com/v3/REST/template?EditMode=tool\&Limit=100\&OwnerType=user';
 		$response = wp_remote_get(
 			$api_url,
 			[
@@ -339,5 +342,35 @@ class Setup {
 		}
 
 		return $templates;
+	}
+
+	/**
+	 * Check mailjet key whether it's master key or not.
+	 */
+	public function check_mailjet_key() {
+		$api_url   = 'https://api.mailjet.com/v3/REST/apikey/' . FRESHJET_PUBLIC_KEY;
+		$is_master = false;
+
+		$response = wp_remote_get(
+			$api_url,
+			[
+				'headers' => array(
+					'Authorization' => 'Basic ' . base64_encode( FRESHJET_PUBLIC_KEY . ':' . FRESHJET_SECRET_KEY ),
+				),
+			]
+		);
+
+		$json_list  = $response['body'];
+		$array_list = json_decode( $json_list, true );
+
+		if ( isset( $array_list['Count'] ) && $array_list['Count'] > 0 ) {
+			$data = $array_list['Data'][0];
+
+			if ( isset( $data['IsMaster'] ) && $data['IsMaster'] ) {
+				$is_master = true;
+			}
+		}
+
+		return $is_master;
 	}
 }
