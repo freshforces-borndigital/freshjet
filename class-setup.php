@@ -312,7 +312,7 @@ class Setup {
 		$templates = $mailjet->get( Resources::$Template, [ 'filters' => $filters ] );
 		*/
 
-		$response = wp_remote_get(
+		$response  = wp_remote_get(
 			$api_url,
 			[
 				'headers' => array(
@@ -320,10 +320,14 @@ class Setup {
 				),
 			]
 		);
+		$templates = [];
+
+		if ( is_wp_error( $response ) ) {
+			return $templates;
+		}
 
 		$json_list  = $response['body'];
 		$array_list = json_decode( $json_list, true );
-		$templates  = [];
 
 		if ( ! isset( $array_list['Count'] ) || $array_list['Count'] < 1 ) {
 			return $templates;

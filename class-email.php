@@ -29,10 +29,21 @@ class Email {
 	private $options = [];
 
 	/**
+	 * Mailjet's forbidden headers
+	 *
+	 * @link https://dev.mailjet.com/guides/#add-email-headers
+	 *
+	 * @var array
+	 */
+	private $forbidden_headers = [];
+
+	/**
 	 * Constructor
 	 */
 	public function __construct() {
 		$this->options = get_option( $this->options_key );
+
+		$this->forbidden_headers = require FRESHJET_PLUGIN_DIR . '/forbidden-headers.php';
 	}
 
 	/**
@@ -293,7 +304,7 @@ class Email {
 		}
 
 		foreach ( $attachments as $file_path ) {
-			// ! Think about the security of using this.
+			// ! Think about wpcs warning.
 			$file_contents = file_get_contents( $file_path );
 
 			// Make sure the file exists.
@@ -326,18 +337,38 @@ class Email {
 		// Mailjet formatted headers.
 		$mailjet_headers = [];
 
+		if ( empty( $headers ) ) {
+			return $mailjet_headers;
+		}
+
 		/**
 		 * Note: Mailjet uses array for the $headers parameter, while wp_mail can use either string or array.
-		 * And there were some un-allowed types of $headers in mailjet (not sure whether this issue still exist or not).
+		 * And there are some forbidden headers in mailjet (https://dev.mailjet.com/guides/#add-email-headers).
 		 */
 		if ( is_array( $headers ) ) {
-			// TODO: Check if there $headers contains un-allowed header(s).
-			$mailjet_headers = $headers;
+			foreach ( $headers as $header ) {
+				$header       = trim( $header );
+				$explode      = explode( ':', $header );
+				$header_key   = isset( $explode[0] ) && ! empty( $explode[0] ) ? trim( $explode[0] ) : '';
+				$header_value = isset( $explode[1] ) && ! empty( $explode[1] ) ? trim( $explode[1] ) : '';
+
+				if ( ! in_array( $header_key, $this->forbidden_headers, true ) && ! empty( $header_key ) && ! empty( $header_value ) ) {
+					$mailjet_headers[ $header_key ] = $header_value;
+				}
+			}
 		} else {
 			// TODO: Handle string formatted headers, convert to array.
 		}
 
 		return $mailjet_headers;
+	}
+
+	/**
+	 * Parse WordPress's header's array to Mailjet's format
+	 *
+	 * @return void
+	 */
+	public function parse_array_headers() {
 	}
 
 	/**
