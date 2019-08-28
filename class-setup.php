@@ -361,6 +361,10 @@ class Setup {
 			]
 		);
 
+		if ( is_wp_error( $response ) ) {
+			return $is_master;
+		}
+
 		$json_list  = $response['body'];
 		$array_list = json_decode( $json_list, true );
 
