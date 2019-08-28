@@ -50,6 +50,14 @@ Yes, we have it [here] (https://github.com/freshforces-borndigital/freshjet)
 1. Admin Screenshot
 
 == Changelog ==
+= 0.6.4 =
+- Settings: add blank option to template selection
+- Bugfix: wp_error on wp_remote_get response was not handled
+- Bugfix: headers support
+
+= 0.5.4 =
+- Distinguish the master key and sub-account key
+
 = 0.5.3 =
 - `wp_mail()` drop-in replacement
 - Provide support for Mailjet's Transactional Passport Template
