@@ -202,6 +202,7 @@ class Setup {
 
 		<select name="<?php echo esc_attr( $this->options_key ); ?>[template_id]" class="regular-text">
 			<?php if ( ! empty( $templates ) ) : ?>
+				<option value=""><?php esc_html_e( 'Blank', 'freshjet' ); ?></option>
 				<?php foreach ( $templates as $template ) : ?>
 					<option value="<?php echo esc_attr( $template['id'] ); ?>" <?php selected( $template_id, $template['id'] ); ?>>
 						<?php echo esc_html( $template['name'] ); ?>
@@ -212,7 +213,7 @@ class Setup {
 					</option>
 				<?php endforeach; ?>
 			<?php else : ?>
-				<option value="">Not available</option>
+				<option value=""><?php esc_html_e( 'Not available', 'freshjet' ); ?></option>
 			<?php endif; ?>
 		</select>
 
