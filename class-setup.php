@@ -202,6 +202,7 @@ class Setup {
 
 		<select name="<?php echo esc_attr( $this->options_key ); ?>[template_id]" class="regular-text">
 			<?php if ( ! empty( $templates ) ) : ?>
+				<option value=""><?php esc_html_e( 'Blank', 'freshjet' ); ?></option>
 				<?php foreach ( $templates as $template ) : ?>
 					<option value="<?php echo esc_attr( $template['id'] ); ?>" <?php selected( $template_id, $template['id'] ); ?>>
 						<?php echo esc_html( $template['name'] ); ?>
@@ -212,7 +213,7 @@ class Setup {
 					</option>
 				<?php endforeach; ?>
 			<?php else : ?>
-				<option value="">Not available</option>
+				<option value=""><?php esc_html_e( 'Not available', 'freshjet' ); ?></option>
 			<?php endif; ?>
 		</select>
 
@@ -311,7 +312,7 @@ class Setup {
 		$templates = $mailjet->get( Resources::$Template, [ 'filters' => $filters ] );
 		*/
 
-		$response = wp_remote_get(
+		$response  = wp_remote_get(
 			$api_url,
 			[
 				'headers' => array(
@@ -319,10 +320,14 @@ class Setup {
 				),
 			]
 		);
+		$templates = [];
+
+		if ( is_wp_error( $response ) ) {
+			return $templates;
+		}
 
 		$json_list  = $response['body'];
 		$array_list = json_decode( $json_list, true );
-		$templates  = [];
 
 		if ( ! isset( $array_list['Count'] ) || $array_list['Count'] < 1 ) {
 			return $templates;
@@ -359,6 +364,10 @@ class Setup {
 				),
 			]
 		);
+
+		if ( is_wp_error( $response ) ) {
+			return $is_master;
+		}
 
 		$json_list  = $response['body'];
 		$array_list = json_decode( $json_list, true );
