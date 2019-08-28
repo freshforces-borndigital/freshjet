@@ -47,7 +47,7 @@ We support the Passport Transactional Template.
 Yes, we have it [here] (https://github.com/freshforces-borndigital/freshjet)
 
 == Screenshots ==
-1. admin-screenshot-1.png
+1. Admin Screenshot
 
 == Changelog ==
 = 0.5.3 =
